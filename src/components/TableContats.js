@@ -8,6 +8,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import api from "../api/contact";
 import axios from "axios";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function TableContacts() {
@@ -29,6 +32,12 @@ export default function TableContacts() {
 
   }, [])
 
+  const navigate = useNavigate()
+
+  function deleteContact(id) {
+      axios.delete(`http://localhost:3003/contacts/${id}`).then(getAllContacts());
+  }
+
   // const retrieveContacts = async () => {
   //   const response = await api.get("/contacts");
   //     return response.data
@@ -46,6 +55,8 @@ export default function TableContacts() {
   // }, [])
 
   return (
+    <>
+    <h1>Contacts:</h1>
     <TableContainer sx={{ maxWidth: 600 }} component={Paper}>
     <hr></hr>
     {
@@ -58,21 +69,27 @@ export default function TableContacts() {
             <TableCell>#</TableCell>
             <TableCell align="right">Name</TableCell>
             <TableCell align="right">Phone</TableCell>
+            <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {contacts.map((contact) => (
+          {contacts.map((contact, key) => (
             <TableRow
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell align="right">{contact.id}</TableCell>
+              <TableCell align="right">{key + 1}</TableCell>
               <TableCell align="right">{contact.name}</TableCell>
               <TableCell align="right">{contact.phone}</TableCell>
-           
+              <TableCell align="right">
+                <EditIcon onClick={() => {navigate(`/edit-contact/${contact.id}`)}} /> 
+                <DeleteIcon onClick={() => {deleteContact(contact.id)} } />
+              </TableCell>
+             
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+    </>
   );
 }
